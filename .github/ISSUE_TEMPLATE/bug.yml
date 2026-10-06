@@ -1,0 +1,62 @@
+name: Bug report
+description: Something isn't working as expected
+title: "bug: "
+labels: ["type: bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in as much as you can.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+      placeholder: When I upload a .docx, the status gets stuck on "Converting…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: The PDF should download.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to localhost:8000
+        2. Drag sample.docx
+        3. See error
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: How are you running it?
+      options:
+        - Docker (docker compose up)
+        - Local (uvicorn)
+        - Codespaces
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: macOS 14, Ubuntu 22.04, Windows 11…
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Server output, browser console, or Docker logs.
+      render: shell

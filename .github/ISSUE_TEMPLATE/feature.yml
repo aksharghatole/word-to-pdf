@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest an idea or improvement
+title: "feat: "
+labels: ["type: feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. Describe what you'd like to see.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      placeholder: I often need to convert 20 files at once and doing it one by one is slow.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      placeholder: Add multi-file upload with a ZIP download.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      placeholder: Could just run the CLI in a loop.
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: I'm willing to open a PR for this

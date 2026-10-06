@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word → PDF</title>
+  <meta name="description" content="Convert Word documents to PDF. Self-hosted, privacy-first." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>" />
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>Word <span class="arrow">→</span> PDF</h1>
+      <p class="subtitle">Drop a document, get a PDF. Nothing stored.</p>
+    </header>
+
+    <form id="drop-zone" class="drop-zone" aria-label="Upload a document">
+      <input type="file" id="file-input" accept=".docx,.doc,.odt,.rtf,.txt" hidden />
+      <div class="drop-inner">
+        <svg class="icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 16V4m0 0L8 8m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+        </svg>
+        <p class="primary"><strong>Click to upload</strong> or drag &amp; drop</p>
+        <p class="hint">.docx, .doc, .odt, .rtf, .txt — max 20 MB</p>
+      </div>
+    </form>
+
+    <section id="status" class="status" hidden role="status" aria-live="polite"></section>
+
+    <footer class="footer">
+      <a href="https://github.com/aksharghatole/word-to-pdf" target="_blank" rel="noopener">GitHub</a>
+      <span class="sep">·</span>
+      <a href="/docs" target="_blank" rel="noopener">API</a>
+      <span class="sep">·</span>
+      <a href="https://github.com/aksharghatole/word-to-pdf/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

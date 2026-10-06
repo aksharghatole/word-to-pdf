@@ -8,16 +8,24 @@
   const MAX_SIZE = 20 * 1024 * 1024; // 20 MB
   const ALLOWED = [".docx", ".doc", ".odt", ".rtf", ".txt"];
 
-  function setStatus(message, kind = "") {
+  let lastFile = null;
+
+  function setStatus(html, kind = "") {
     statusEl.hidden = false;
     statusEl.className = `status ${kind}`.trim();
-    statusEl.textContent = message;
+    statusEl.innerHTML = html;
   }
 
   function clearStatus() {
     statusEl.hidden = true;
-    statusEl.textContent = "";
+    statusEl.innerHTML = "";
     statusEl.className = "status";
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c]));
   }
 
   function extOf(name) {
@@ -36,12 +44,8 @@
     if (!ALLOWED.includes(extOf(file.name))) {
       return `Unsupported file type. Allowed: ${ALLOWED.join(", ")}`;
     }
-    if (file.size > MAX_SIZE) {
-      return "File too large (max 20 MB).";
-    }
-    if (file.size === 0) {
-      return "File is empty.";
-    }
+    if (file.size > MAX_SIZE) return "File too large (max 20 MB).";
+    if (file.size === 0) return "File is empty.";
     return null;
   }
 
@@ -56,56 +60,116 @@
     URL.revokeObjectURL(url);
   }
 
+  function renderBusy(filename) {
+    setStatus(
+      `<span class="spinner" aria-hidden="true"></span>
+       <span>Converting <strong>${escapeHtml(filename)}</strong>…</span>`,
+      "busy"
+    );
+  }
+
+  function renderSuccess(filename, downloadName) {
+    setStatus(
+      `<div class="status-row">
+         <svg class="status-icon success" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+           <path d="M20 6 9 17l-5-5"/>
+         </svg>
+         <div>
+           <div class="status-title">Done — ${escapeHtml(downloadName)} downloaded.</div>
+           <div class="status-sub">Original: ${escapeHtml(filename)}</div>
+         </div>
+       </div>
+       <button type="button" class="action" id="convert-another">Convert another</button>`,
+      "success"
+    );
+    const btn = document.getElementById("convert-another");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        clearStatus();
+        fileInput.click();
+      });
+    }
+  }
+
+  function renderError(message) {
+    setStatus(
+      `<div class="status-row">
+         <svg class="status-icon error" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+           <circle cx="12" cy="12" r="10"/>
+           <path d="M12 8v4M12 16h.01"/>
+         </svg>
+         <div>
+           <div class="status-title">Conversion failed</div>
+           <div class="status-sub">${escapeHtml(message)}</div>
+         </div>
+       </div>
+       <button type="button" class="action" id="retry">Try again</button>`,
+      "error"
+    );
+    const btn = document.getElementById("retry");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        if (lastFile) {
+          uploadFile(lastFile);
+        } else {
+          clearStatus();
+          fileInput.click();
+        }
+      });
+    }
+  }
+
   async function uploadFile(file) {
     const error = validate(file);
     if (error) {
-      setStatus(error, "error");
+      lastFile = null;
+      renderError(error);
       return;
     }
+
+    lastFile = file;
 
     const formData = new FormData();
     formData.append("file", file);
 
     dropZone.classList.add("busy");
-    setStatus(`Converting ${file.name}…`, "busy");
+    renderBusy(file.name);
 
     try {
-      const res = await fetch("/api/convert", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch("/api/convert", { method: "POST", body: formData });
 
       if (!res.ok) {
         let detail = `Server error (${res.status})`;
         try {
           const data = await res.json();
           if (data && data.detail) detail = data.detail;
-        } catch {
-          /* non-JSON error body — keep default message */
-        }
+        } catch { /* non-JSON body */ }
         throw new Error(detail);
       }
 
       const blob = await res.blob();
-      downloadBlob(blob, pdfNameFor(file.name));
-      setStatus(`Done — ${pdfNameFor(file.name)} downloaded.`, "success");
+      const downloadName = pdfNameFor(file.name);
+      downloadBlob(blob, downloadName);
+      renderSuccess(file.name, downloadName);
     } catch (err) {
-      setStatus(err.message || "Conversion failed.", "error");
+      renderError(err.message || "Conversion failed.");
     } finally {
       dropZone.classList.remove("busy");
       fileInput.value = "";
     }
   }
 
-  // Click to open file picker
-  dropZone.addEventListener("click", () => fileInput.click());
+  // Click to open file picker (ignore clicks that landed on inner buttons)
+  dropZone.addEventListener("click", (e) => {
+    if (e.target.closest("button")) return;
+    fileInput.click();
+  });
 
   fileInput.addEventListener("change", (e) => {
     const file = e.target.files && e.target.files[0];
     if (file) uploadFile(file);
   });
 
-  // Drag & drop
   ["dragenter", "dragover"].forEach((evt) => {
     dropZone.addEventListener(evt, (e) => {
       e.preventDefault();
@@ -128,15 +192,9 @@
     if (file) uploadFile(file);
   });
 
-  // Prevent browser from opening dropped files outside the drop zone
   ["dragover", "drop"].forEach((evt) => {
     window.addEventListener(evt, (e) => {
       if (!dropZone.contains(e.target)) e.preventDefault();
     });
-  });
-
-  // Clear status when user starts another interaction
-  dropZone.addEventListener("click", () => {
-    if (statusEl.classList.contains("error")) clearStatus();
   });
 })();

@@ -39,3 +39,6 @@ outputs/
 *.swo
 .DS_Store
 Thumbs.db
+
+# Test artifacts
+tests/fixtures/

@@ -1,0 +1,132 @@
+:root {
+  --bg: #0f1117;
+  --card: #171a23;
+  --card-hover: #1b2130;
+  --border: #262a36;
+  --text: #e6e8ee;
+  --muted: #8a90a2;
+  --accent: #4f8cff;
+  --accent-hover: #6b9dff;
+  --success: #2ecc71;
+  --error: #ff5c5c;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: radial-gradient(1200px 600px at 50% -10%, #1a2030, var(--bg));
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  width: 100%;
+  max-width: 560px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  font-weight: 650;
+}
+
+.arrow { color: var(--accent); margin: 0 4px; }
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.drop-zone {
+  display: block;
+  background: var(--card);
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform .1s;
+}
+
+.drop-zone:hover { border-color: var(--accent); }
+
+.drop-zone:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.drop-zone.dragover {
+  border-color: var(--accent);
+  background: var(--card-hover);
+  transform: scale(1.01);
+}
+
+.drop-zone.busy {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.drop-inner .icon {
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.drop-inner p { margin: 4px 0; }
+
+.primary { font-size: 1rem; }
+
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.status {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.status.success { border-color: var(--success); }
+.status.error { border-color: var(--error); }
+.status.busy { border-color: var(--accent); }
+
+.footer {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.footer a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+
+.footer a:hover { color: var(--accent); }
+.footer .sep { margin: 0 8px; opacity: 0.5; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  .drop-zone.dragover { transform: none; }
+}

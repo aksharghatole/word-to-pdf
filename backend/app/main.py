@@ -4,7 +4,8 @@ import uuid
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from .config import ALLOWED_EXTENSIONS, MAX_FILE_SIZE, UPLOAD_DIR
 from .converter import ConversionError, convert_to_pdf
@@ -63,4 +64,23 @@ async def convert(file: UploadFile = File(...)) -> FileResponse:
         pdf_path,
         media_type="application/pdf",
         filename=download_name,
+    )
+
+
+# ---- Frontend --------------------------------------------------------------
+
+FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
+
+
+@app.get("/")
+async def root() -> RedirectResponse:
+    """Send visitors to the app."""
+    return RedirectResponse(url="/app/")
+
+
+if FRONTEND_DIR.exists():
+    app.mount(
+        "/app",
+        StaticFiles(directory=FRONTEND_DIR, html=True),
+        name="frontend",
     )

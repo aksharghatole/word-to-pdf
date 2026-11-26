@@ -1,4 +1,4 @@
-# word-to-pdf
+# Word to PDF
 
 Convert Word documents to PDF. Self-hosted, privacy-first, Docker-ready.
 
@@ -6,13 +6,15 @@ Convert Word documents to PDF. Self-hosted, privacy-first, Docker-ready.
 [![CI](https://github.com/aksharghatole/word-to-pdf/actions/workflows/ci.yml/badge.svg)](https://github.com/aksharghatole/word-to-pdf/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-**→ Live demo:** https://word-to-pdf-b4dr.onrender.com/app/
+**[Launch web app](https://word-to-pdf-b4dr.onrender.com/app/)**
+
+[Quick start](#quick-start-docker) · [Supported formats](#supported-formats) · [API](#api) · [Roadmap](#roadmap)
 
 ## What it does
 
 Drop a `.docx` (or `.doc`, `.odt`, `.rtf`, `.txt`) into the browser, get a PDF back. Conversion runs in a FastAPI service that shells out to LibreOffice headless — no external APIs, no tracking, no data leaving the container.
 
-Run it on your own machine for full privacy, or use the hosted demo above.
+Run it on your own machine to keep documents within your own deployment. The hosted demo sends documents to its server for conversion; avoid uploading sensitive material to a deployment you do not control.
 
 ## Quick start (Docker)
 
